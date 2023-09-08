@@ -1,0 +1,29 @@
+.program dht
+    ; Clock must be set for 1µs per instruction
+
+    pull block          ; Wait for start
+
+    set x, 31           ; set x register with 31 (for 31 * 32 µS)
+    set pindirs, 1      ; set pin as output
+    set pins, 0         ; set pin to low
+    loop_init_low:      ; wait 992 ms
+        jmp x-- loop_init_low [31]
+
+    set pins, 1         ; set pin to high
+    set pindirs, 0      ; set pin as input
+
+    wait 0 pin 0        ; Wait for low
+    wait 1 pin 0        ; wait for high
+
+    set x, 31               ; Set number bit to received (ignore CRC :( sorry )
+    loop_data:          
+        wait 0 pin 0        ; Wait for low
+        wait 1 pin 0        ; wait for high
+        
+        nop [29]            ; wait for ~ 30 µS
+
+        in pins, 1          ; read the pin state and store bit value
+        
+        jmp x--, loop_data  ; Run until read all bits
+        
+    push                    ; send result

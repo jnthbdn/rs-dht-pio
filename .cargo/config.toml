@@ -1,0 +1,14 @@
+[build]
+# Set the default target to match the Cortex-M0+ in the RP2040
+target = "thumbv6m-none-eabi"
+
+[target.thumbv6m-none-eabi]
+rustflags = [
+    "-C", "link-arg=--nmagic",
+    "-C", "link-arg=-Tlink.x",
+    "-C", "inline-threshold=5",
+    "-C", "no-vectorize-loops",
+]
+
+runner = "elf2uf2-rs -d"
+
