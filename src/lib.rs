@@ -8,16 +8,12 @@ use rp2040_hal::pio::{Rx, UninitStateMachine};
 
 #[derive(Debug)]
 pub enum DhtError {
-    /// DHT never aswer to start signal
-    StartTimout,
     /// Timeout during communication.
     Timeout,
     /// CRC mismatch.
     CrcMismatch,
-    /// Failed to get pin state (low or high)
-    ReadPinError,
-    /// Internal state error
-    InternatError,
+    /// FIFO Read error
+    ReadError,
 }
 
 #[derive(Debug)]
@@ -59,6 +55,7 @@ impl<P: PIOExt, STI: StateMachineIndex> PicoDht<P, STI> {
         }
     }
 
+    /// Read data from the sensor. This blocking function (for maximum timeout of 2 seconds).
     pub fn read_data(&mut self, delay: &mut Delay) -> Result<DhtResult, DhtError> {
         let mut timeout = 2000;
 
@@ -74,7 +71,13 @@ impl<P: PIOExt, STI: StateMachineIndex> PicoDht<P, STI> {
             return Err(DhtError::Timeout);
         }
 
-        let raw = self.rx_fifo.read().unwrap_or_default();
+        let raw = match self.rx_fifo.read() {
+            Some(d) => d,
+            None => {
+                self.sm.restart();
+                return Err(DhtError::ReadError);
+            }
+        };
 
         let t_raw = raw & 0x0000FFFF;
         let h_raw = (raw & 0xFFFF0000) >> 16;
