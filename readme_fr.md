@@ -16,8 +16,27 @@ Le chip RP2040 (utilisé pour le Pico), possède un périphérique un peu atypiq
 
 Le PIO se programme à l'aide d'un assembleur nommé `pioasm`, il ne comporte que quelques instructions très basiques. Le plus intéressant est que chaque instruction prends (en général), 1 cycle pour s'exécute. De plus il est possible de diviser la clock à laquelle le programme s'éxécute. Dans le notre cas, on disive la clock principale, de 125 MHz, par 125, ce qui nous donne une instruction par microsecondes.
 
-## Exemple
-`todo!()`
+## Usage
+Dans un premier temps créer récupérer les objets PIO
+```rust
+let (dht_pio, dht_sm, _, _, _) = pac.PIO0.split(&mut pac.RESETS);
+```
+Pour créer un nouvelle objet:
+- DHT22  
+  ```rust
+  let mut dht = Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function());
+  ```
+- DHT11
+  ```rust
+  let mut dht = Dht11::new(dht_pio, dht_sm, pins.gpio0.into_function());
+  ```
+
+Lire les données:
+```rust
+let dht_data = dht.read(&mut delay);
+```
+
+NB: `read` retrun un `Result<DhtResult, DhtError>`.
 
 ## Support
 ### Board
@@ -25,7 +44,7 @@ Pour le moment le crates n'a été testé que sur un Raspberry Pico.
 
 ### DHT
 ✅ DHT22  
-❌ DHT11
+❔ DHT11
 
 ## TODO
 - [ ] Finir le Readme
