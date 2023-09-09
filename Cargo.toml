@@ -1,7 +1,15 @@
 [package]
-name = "rp-dht"
+name = "dht-pio"
 version = "0.1.0"
 edition = "2021"
+
+license = "MIT OR Apache-2.0"
+description = "A DHT Implementation using PIO (Programmable Input/Output), tested on Rasberry Pi Pico"
+homepage = "https://github.com/jnthbdn/rs-dht-pio"
+repository = "https://github.com/jnthbdn/rs-dht-pio"
+readme = "readme.md"
+keywords = ["dht", "pico", "pio"]
+categories = ["embedded", "hardware-support", "no-std"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,4 +21,3 @@ rp2040-boot2 = "0.2.1"
 rp2040-hal = { version = "0.9.0", features = ["rp2040-e5"] }
 pio-proc = "0.2.2"
 pio = "0.2.1"
-# embedded-alloc = "0.5.0"
