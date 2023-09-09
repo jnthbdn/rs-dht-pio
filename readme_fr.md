@@ -31,6 +31,6 @@ Pour le moment le crates n'a été testé que sur un Raspberry Pico.
 - [ ] Finir le Readme
 - [x] Ajouter la lecture du CRC
 - [x] Vérifier le CRC
-- [ ] Support du DHT11
+- [x] Support du DHT11
 - [ ] Tester DHT11
 - [ ] Documenter le code

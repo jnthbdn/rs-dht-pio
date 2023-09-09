@@ -28,6 +28,6 @@ For the moment, the crates have only been tested on a Raspberry Pico.
 - [ ] Finish Readme
 - [x] Add CRC read
 - [x] Check CRC
-- [ ] DHT11 support
+- [x] DHT11 support
 - [ ] Test DHT11
 - [ ] Document code
