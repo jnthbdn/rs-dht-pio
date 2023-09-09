@@ -3,7 +3,7 @@ name = "dht-pio"
 version = "0.1.0"
 edition = "2021"
 
-license = "MIT OR Apache-2.0"
+license = "MIT"
 description = "A DHT Implementation using PIO (Programmable Input/Output), tested on Rasberry Pi Pico"
 homepage = "https://github.com/jnthbdn/rs-dht-pio"
 repository = "https://github.com/jnthbdn/rs-dht-pio"
