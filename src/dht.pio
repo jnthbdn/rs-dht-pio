@@ -2,10 +2,11 @@
 .program dht
     ; Clock must be set for 1µs per instruction
 
+    set pindirs, 1      ; set pin as output
+    set pins, 1         ; set pin to high
     pull block          ; Wait for start
 
     set x, 31           ; set x register with 31 (for 31 * 32 µS)
-    set pindirs, 1      ; set pin as output
     set pins, 0         ; set pin to low
     loop_init_low:      ; wait 992 ms
         jmp x-- loop_init_low [31]
