@@ -22,3 +22,11 @@ For the moment, the crates have only been tested on a Raspberry Pico.
 ### DHT
 ✅ DHT22  
 ❌ DHT11
+
+## TODO
+[ ] Finish Readme
+[ ] Add CRC read
+[ ] Check CRC
+[ ] DHT11 support
+[ ] Test DHT11
+[ ] Document code
