@@ -1,4 +1,5 @@
 # DHT PIO Rust Library
+[![crates.io](https://img.shields.io/crates/v/dht-pio)](https://crates.io/crates/dht-pio) [![GitHub](https://img.shields.io/github/license/jnthbdn/rs-dht-pio)](https://github.com/jnthbdn/rs-dht-pio)
 
 _[french version](readme_fr.md)_
 
@@ -24,9 +25,9 @@ For the moment, the crates have only been tested on a Raspberry Pico.
 ❌ DHT11
 
 ## TODO
-[ ] Finish Readme
-[ ] Add CRC read
-[ ] Check CRC
-[ ] DHT11 support
-[ ] Test DHT11
-[ ] Document code
+- [ ] Finish Readme
+- [ ] Add CRC read
+- [ ] Check CRC
+- [ ] DHT11 support
+- [ ] Test DHT11
+- [ ] Document code

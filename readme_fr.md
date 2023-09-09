@@ -1,6 +1,10 @@
 # DHT PIO Rust Library
 
+[![crates.io](https://img.shields.io/crates/v/dht-pio)](https://crates.io/crates/dht-pio) [![GitHub](https://img.shields.io/github/license/jnthbdn/rs-dht-pio)](https://github.com/jnthbdn/rs-dht-pio)
+
+
 _[english version](readme.md)_
+
 
 ## Pourquoi ?
 Les DHT (22 ou 11) utilisent un protocole 1-Wire, qui n'est pas compatible avec le protocole du même nom de [Dallas Semicondutors](https://en.wikipedia.org/wiki/1-Wire). Le [Raspberry Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/) (comme d'autres microcontrôleurs) ne possède pas de périphérique dédié à ce protocole. 
@@ -24,9 +28,9 @@ Pour le moment le crates n'a été testé que sur un Raspberry Pico.
 ❌ DHT11
 
 ## TODO
-[ ] Finir le Readme
-[ ] Ajouter la lecture du CRC
-[ ] Vérifier le CRC
-[ ] Support du DHT11
-[ ] Tester DHT11
-[ ] Documenter le code
+- [ ] Finir le Readme
+- [ ] Ajouter la lecture du CRC
+- [ ] Vérifier le CRC
+- [ ] Support du DHT11
+- [ ] Tester DHT11
+- [ ] Documenter le code
