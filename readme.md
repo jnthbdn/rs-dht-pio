@@ -29,7 +29,7 @@ To create a new object:
   ```
 
 Read data:
-````rust
+```rust
 let dht_data = dht.read(&mut delay);
 ```
 
