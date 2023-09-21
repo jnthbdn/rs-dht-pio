@@ -11,8 +11,8 @@
     loop_init_low:      ; wait 992 ms
         jmp x-- loop_init_low [31]
 
-    set pins, 1         ; set pin to high
-    set pindirs, 0      ; set pin as input
+    set pins, 1 [19]  ; set pin to high (for 20µS)
+    set pindirs, 0    ; set pin as input
 
     wait 0 pin 0        ; Wait for low
     wait 1 pin 0        ; wait for high
@@ -20,17 +20,18 @@
     set y, 4                ; set the number of byte to receive - 1
     init_loop_data:
         set x, 7               ; Set number bit to receive - 1
-        loop_data:          
+        loop_data:
             wait 0 pin 0        ; Wait for low
             wait 1 pin 0        ; wait for high
-            
+
             nop [29]            ; wait for ~ 30 µS
+            nop [9]             ; wait for ~ 10 µS
 
             in pins, 1          ; read the pin state and store bit value
-            push iffull noblock ; Push data if full
+            jmp x--, loop_data  ; Loop while there are bits left to read
 
-            jmp x--, loop_data  ; Run until read all bitsw
 
+    push iffull noblock         ; Push data if full
     jmp y--, init_loop_data
 
     push                    ; Push the last bytes
