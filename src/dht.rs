@@ -1,6 +1,6 @@
 use cortex_m::delay::Delay;
 use pio_proc::pio_file;
-use rp2040_hal::gpio::AnyPin;
+use rp2040_hal::gpio::{AnyPin, FunctionPio0, Pin};
 use rp2040_hal::pio::{PIOExt, Running, StateMachine, StateMachineIndex, Tx};
 use rp2040_hal::pio::{Rx, UninitStateMachine};
 
@@ -27,7 +27,9 @@ impl<P: PIOExt, STI: StateMachineIndex> DhtPio<P, STI> {
 
         let (int, frac) = (125, 0);
         let (mut sm, rx, tx) = rp2040_hal::pio::PIOBuilder::from_program(installed)
+            .out_pins(pin.id().num, 1)
             .set_pins(pin.id().num, 1)
+            .in_pin_base(pin.id().num)
             .clock_divisor_fixed_point(int, frac)
             .push_threshold(32)
             .build(sm);
