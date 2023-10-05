@@ -1,6 +1,6 @@
 use cortex_m::delay::Delay;
 use pio_proc::pio_file;
-use rp2040_hal::gpio::{AnyPin, FunctionPio0, Pin};
+use rp2040_hal::gpio::AnyPin;
 use rp2040_hal::pio::{PIOExt, Running, StateMachine, StateMachineIndex, Tx};
 use rp2040_hal::pio::{Rx, UninitStateMachine};
 
