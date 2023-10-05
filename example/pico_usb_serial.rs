@@ -1,7 +1,6 @@
 use alloc::{
     boxed::Box,
     string::{String, ToString},
-    vec::Vec,
 };
 use cortex_m::interrupt::free;
 use rp_pico::hal::pac;
@@ -73,16 +72,6 @@ impl PicoUsbSerial {
                 Ok(Self {})
             }
         }
-    }
-
-    pub fn available_data(&self) -> usize {
-        unsafe {
-            return USB_BUFFER.as_ref().unwrap().available_to_read();
-        };
-    }
-
-    pub fn read(&self) -> u8 {
-        free(|_cs| unsafe { USB_BUFFER.as_mut().unwrap().read().unwrap_or(0) })
     }
 
     pub fn write(&self, data: &[u8]) -> usb_device::Result<usize> {
