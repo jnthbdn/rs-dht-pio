@@ -53,3 +53,6 @@ Pour le moment le crates n'a été testé que sur un Raspberry Pico.
 - [x] Support du DHT11
 - [ ] Tester DHT11
 - [ ] Documenter le code
+
+## Remerciement
+ <img src="https://avatars.githubusercontent.com/u/10778792?v=4" style="width: 40px; border-radius: 50%; vertical-align: middle;" /> [Geir Ertzaas (grukx)](https://github.com/grukx), pour avoir découvert (trop?) de bugs.
