@@ -40,16 +40,16 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht22<P, STI> {
     }
 
     pub fn read(&mut self, delay: &mut Delay) -> Result<DhtResult, DhtError> {
-        let (t, h) = self.dht.read_data(delay)?;
-        let mut final_t: i32 = (t & 0x7FFF) as i32;
+        let (raw_temp, raw_hum) = self.dht.read_data(delay)?;
+        let mut final_t: f32 = (raw_temp & 0x7FFF) as f32;
 
-        if (t & 0x8000) > 0 {
-            final_t *= -1;
+        if (raw_temp & 0x8000) > 0 {
+            final_t *= -1.0;
         }
 
         Ok(DhtResult {
-            temperature: final_t as f32 / 10.0,
-            humidity: h as f32 / 10.0,
+            temperature: final_t / 10.0,
+            humidity: raw_hum as f32 / 10.0,
         })
     }
 }
@@ -70,14 +70,14 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht11<P, STI> {
 
     pub fn read(&mut self, delay: &mut Delay) -> Result<DhtResult, DhtError> {
         let (t, h) = self.dht.read_data(delay)?;
-        let mut final_t: i32 = ((t & 0x7FFF) >> 8) as i32;
+        let mut final_t: f32 = ((t & 0x7FFF) >> 8) as f32;
 
         if (t & 0x8000) > 0 {
-            final_t *= -1;
+            final_t *= -1.0;
         }
 
         Ok(DhtResult {
-            temperature: final_t as f32,
+            temperature: final_t,
             humidity: (h >> 8) as f32,
         })
     }
