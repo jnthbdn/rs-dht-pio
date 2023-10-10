@@ -42,7 +42,7 @@ impl<P: PIOExt, STI: StateMachineIndex> DhtPio<P, STI> {
         }
     }
 
-    pub fn read_data(&mut self, delay: &mut Delay) -> Result<(u32, u32), DhtError> {
+    pub fn read_data(&mut self, delay: &mut Delay) -> Result<(u16, u16), DhtError> {
         let mut timeout = 2000;
         let mut raw: [Option<u32>; 2] = [None; 2];
 
@@ -79,7 +79,10 @@ impl<P: PIOExt, STI: StateMachineIndex> DhtPio<P, STI> {
             ));
         }
 
-        Ok((data & 0x0000FFFF, (data & 0xFFFF0000) >> 16))
+        Ok((
+            (data & 0x0000FFFF) as u16,
+            ((data & 0xFFFF0000) >> 16) as u16,
+        ))
     }
 
     fn compute_crc(data: u32) -> u32 {
