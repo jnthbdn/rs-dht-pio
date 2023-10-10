@@ -53,6 +53,34 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht22<P, STI> {
         })
     }
 }
+
+pub struct Dht22Type2<P: PIOExt, STI: StateMachineIndex> {
+    dht: DhtPio<P, STI>,
+}
+
+impl<P: PIOExt, STI: StateMachineIndex> Dht22Type2<P, STI> {
+    pub fn new<I: AnyPin<Function = P::PinFunction>>(
+        pio: rp2040_hal::pio::PIO<P>,
+        sm: UninitStateMachine<(P, STI)>,
+        dht_pin: I,
+    ) -> Self {
+        Self {
+            dht: DhtPio::new(pio, sm, dht_pin),
+        }
+    }
+
+    pub fn read(&mut self, delay: &mut Delay) -> Result<DhtResult, DhtError> {
+        let (raw_temp, raw_hum) = self.dht.read_data(delay)?;
+
+        let tmp: i16 = raw_temp as i16;
+
+        Ok(DhtResult {
+            temperature: (tmp as f32) / 10.0,
+            humidity: raw_hum as f32 / 10.0,
+        })
+    }
+}
+
 pub struct Dht11<P: PIOExt, STI: StateMachineIndex> {
     dht: DhtPio<P, STI>,
 }
