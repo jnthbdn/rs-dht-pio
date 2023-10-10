@@ -8,7 +8,7 @@
 
     set x, 31           ; set x register with 31 (for 31 * 32 µS)
     set pins, 0         ; set pin to low
-    loop_init_low:      ; wait 992 ms
+    loop_init_low:      ; wait 992 µs
         jmp x-- loop_init_low [31]
 
     set pins, 1 [19]  ; set pin to high (for 20µS)
