@@ -45,7 +45,7 @@ However, I've come across sensors that don't work like this at all. But in a (ul
   - `0000 0000 0110 1001` = 105 i.e. 10.5°C
   - `1111 1111 1001 0111` = 65431 i.e. -10.5°C
 
-To simplify, if your sensor is a DHT22 but the values don't seem consistent (negative values), then try "Type 2" (and if nothing really works, open an exit 😉 ).
+To simplify, if your sensor is a DHT22 but the values don't seem consistent (negative values), then try "Type 2" (and if nothing really works, open an issue 😉 ).
 
 
 ## Support
