@@ -36,7 +36,19 @@ Lire les données:
 let dht_data = dht.read(&mut delay);
 ```
 
-NB: `read` retrun un `Result<DhtResult, DhtError>`.
+NB: `read` renvoi un `Result<DhtResult, DhtError>`.
+
+### DHT22 Type 2 🧐
+Il semble qu'il existe deux versions de DHT22. Je n'ai rien trouvé de vraiment probant, mais ce qui est certain c'est que tous les DHT22 n'ont pas le même format de donnée... Dans un cas le format est le même que présenté dans (quasi) toutes les datasheet, à savoir le bit de poids fort est à l'état `1` si le nombre est négatif, **mais** la représentation binaire de la valeur absolue de la température n'en est pas changée. Par exemple:
+  - `0000 0000 0110 1001` = 105 soit 10.5°C
+  - `1000 0000 0110 1001` = 32873 soit -10.5°C
+
+C'est comme cela que la struct `Dht22` va "décoder" les données en provenance du capteur.
+Or je suis tombé sur des capteurs qui ne fonctionnaient pas du tout comme cela. Mais de manière (au final) plus logique. Puisque les données sont représentées en [**complément à deux**](https://fr.wikipedia.org/wiki/Compl%C3%A9ment_%C3%A0_deux). Dans ce cas il faut utiliser `Dht22Type2`. Par exemple:
+  - `0000 0000 0110 1001` = 105 soit 10.5°C
+  - `1111 1111 1001 0111` = 65431 soit -10.5°C
+
+Pour simplifier si votre capteur est un DHT22 mais que les valeurs ne semblent pas cohérentes (valeurs négatives) alors essayez le "Type 2" (et si vraiment rien ne marche, ouvrez une issue 😉).
 
 ## Support
 ### Board

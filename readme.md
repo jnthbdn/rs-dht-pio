@@ -33,7 +33,20 @@ Read data:
 let dht_data = dht.read(&mut delay);
 ```
 
-NB: `read` retrun a `Result<DhtResult, DhtError>`.
+NB: `read` return a `Result<DhtResult, DhtError>`.
+
+### DHT22 type 2 🧐
+It seems that there are two versions of DHT22. I haven't found anything really conclusive, but what is certain is that not all DHT22s have the same data format... In one case the format is the same as presented in (almost) all datasheets, i.e. the most significant bit is set to `1` if the number is negative, **but** the binary representation of the absolute temperature value is not changed. For example: 
+  - `0000 0000 0110 1001` = 105 or 10.5°C
+  - `1000 0000 0110 1001` = 32873 or -10.5°C
+
+This is how the `Dht22` struct will "decode" the data coming from the sensor.
+However, I've come across sensors that don't work like this at all. But in a (ultimately) more logical way. Since the data is represented in [**two's complement**](https://en.wikipedia.org/wiki/Two%27s_complement). In this case, use `Dht22Type2`. For example: 
+  - `0000 0000 0110 1001` = 105 i.e. 10.5°C
+  - `1111 1111 1001 0111` = 65431 i.e. -10.5°C
+
+To simplify, if your sensor is a DHT22 but the values don't seem consistent (negative values), then try "Type 2" (and if nothing really works, open an exit 😉 ).
+
 
 ## Support
 ### Board
