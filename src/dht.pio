@@ -6,10 +6,14 @@
     set pins, 1         ; set pin to high
     pull block          ; Wait for start
 
-    set x, 31           ; set x register with 31 (for 31 * 32 µS)
-    set pins, 0         ; set pin to low
-    loop_init_low:      ; wait 992 µs
-        jmp x-- loop_init_low [31]
+    mov y, osr
+
+    startup_signal:
+        set x, 31           ; set x register with 31 (for 31 * 32 µS)
+        set pins, 0 [7]     ; set pin to low (for 8us)
+        loop_init_low:      ; wait 992 µs
+            jmp x-- loop_init_low [31]
+        jmp y--, startup_signal
 
     set pins, 1 [19]  ; set pin to high (for 20µS)
     set pindirs, 0    ; set pin as input

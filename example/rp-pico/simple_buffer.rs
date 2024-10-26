@@ -1,7 +1,7 @@
-use alloc::{collections::VecDeque, vec::Vec};
 use crate::serial_buffer::SerialBuffer;
+use alloc::{collections::VecDeque, vec::Vec};
 
-pub struct SimpleBuffer{
+pub struct SimpleBuffer {
     buf: VecDeque<u8>,
 }
 
@@ -15,8 +15,8 @@ impl SerialBuffer for SimpleBuffer {
         }
     }
 
-    fn write(&mut self, value: u8) -> (){
-        if self.buf.len() < self.buf.capacity(){
+    fn write(&mut self, value: u8) {
+        if self.buf.len() < self.buf.capacity() {
             self.buf.push_back(value);
         }
     }
@@ -25,21 +25,21 @@ impl SerialBuffer for SimpleBuffer {
         self.buf.pop_front()
     }
 
-    fn read_all(&mut self) -> Vec<u8>{
+    fn read_all(&mut self) -> Vec<u8> {
         let mut data = Vec::<u8>::with_capacity(self.available_to_read());
 
-        for _ in 0..self.buf.len(){
+        for _ in 0..self.buf.len() {
             data.push(self.buf.pop_front().unwrap_or(0));
         }
 
-        return data;
+        data
     }
 
-    fn reset(&mut self) -> (){
+    fn reset(&mut self) {
         self.buf.clear();
     }
 
     fn available_to_read(&self) -> usize {
-        return self.buf.len();
+        self.buf.len()
     }
 }
