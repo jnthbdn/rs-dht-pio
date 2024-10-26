@@ -4,17 +4,22 @@
 extern crate alloc;
 extern crate dht_pio;
 
+use defmt_rtt as _;
+
+use embedded_hal::delay::DelayNs;
+
 use alloc::boxed::Box;
 use alloc::format;
 use core::panic::PanicInfo;
 use cortex_m::interrupt::free;
 use dht_pio::Dht22;
-use embedded_alloc::Heap;
+use embedded_alloc::LlffHeap as Heap;
 
-use hal::{clocks::init_clocks_and_plls, clocks::ClockSource, pac, usb::UsbBus, Sio, Watchdog};
 use rp_pico::entry;
 use rp_pico::hal;
 use rp_pico::hal::pio::PIOExt;
+
+use hal::{clocks::init_clocks_and_plls, pac, usb::UsbBus, Sio, Watchdog};
 
 mod pico_usb_serial;
 mod serial_buffer;
@@ -54,8 +59,7 @@ fn main() -> ! {
         &mut pac.RESETS,
     );
 
-    let core = pac::CorePeripherals::take().unwrap();
-    let mut delay = cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.get_freq().to_Hz());
+    let mut delay = hal::Timer::new(pac.TIMER, &mut pac.RESETS, &clocks);
 
     PicoUsbSerial::init(
         UsbBus::new(
@@ -77,12 +81,20 @@ fn main() -> ! {
     let (dht_pio, dht_sm, _, _, _) = pac.PIO0.split(&mut pac.RESETS);
     let mut dht = Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function());
 
+    defmt::info!("DHT22 rp-pico");
+
+    defmt::info!("waiting sensor...");
+    delay.delay_ms(1000);
+    defmt::info!("...done");
+
     loop {
         free(|_cs| match dht.read(&mut delay) {
             Ok(result) => {
+                defmt::info!("DHT22 {:#?}", result);
                 serial.write(format!("{:#?}\r\n", result).as_bytes()).ok();
             }
             Err(e) => {
+                defmt::error!("DHT22 {}", e);
                 serial
                     .write(format!("DHT Error: {:?}\r\n", e).as_bytes())
                     .ok();
@@ -93,7 +105,7 @@ fn main() -> ! {
     }
 }
 
-fn init_heap() -> () {
+fn init_heap() {
     use core::mem::MaybeUninit;
     static mut HEAP_MEM: [MaybeUninit<u8>; HEAP_SIZE] = [MaybeUninit::uninit(); HEAP_SIZE];
     unsafe { HEAP.init(HEAP_MEM.as_ptr() as usize, HEAP_SIZE) };

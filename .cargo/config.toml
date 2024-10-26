@@ -1,14 +1,40 @@
 [build]
-# Set the default target to match the Cortex-M0+ in the RP2040
+# Set the default target to match the Cortex-M0+ (rp-pico)
 target = "thumbv6m-none-eabi"
+
+# Set the target to match the Cortex-M33 (rp235x, rp-pico2)
+# target = "thumbv8m.main-none-eabihf"
 
 [target.thumbv6m-none-eabi]
 rustflags = [
     "-C", "link-arg=--nmagic",
+    "-C", "link-arg=-Trp2040_memory.x",
     "-C", "link-arg=-Tlink.x",
-    "-C", "inline-threshold=5",
+    "-C", "link-arg=-Tdefmt.x",
     "-C", "no-vectorize-loops",
 ]
 
 runner = "elf2uf2-rs -d"
 
+[target.riscv32imac-unknown-none-elf]
+rustflags = [
+    "-C", "link-arg=--nmagic",
+    "-C", "link-arg=-Trp235x_riscv.x",
+    "-C", "link-arg=-Tdefmt.x",
+]
+
+runner = "picotool load -u -v -x -t elf"
+
+[target.thumbv8m.main-none-eabihf]
+rustflags = [
+    "-C", "link-arg=--nmagic",
+    "-C", "link-arg=-Trp235x_memory.x",
+    "-C", "link-arg=-Tlink.x",
+    "-C", "link-arg=-Tdefmt.x",
+    "-C", "target-cpu=cortex-m33"
+]
+
+runner = "picotool load -u -v -x -t elf"
+
+[env]
+DEFMT_LOG = "debug"

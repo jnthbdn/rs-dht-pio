@@ -9,13 +9,11 @@ use rp_pico::hal::usb::UsbBus;
 
 use usb_device::{
     class_prelude::UsbBusAllocator,
-    prelude::{UsbDevice, UsbDeviceBuilder, UsbVidPid},
+    prelude::{StringDescriptors, UsbDevice, UsbDeviceBuilder, UsbVidPid},
 };
 use usbd_serial::SerialPort;
 
 use crate::serial_buffer::SerialBuffer;
-
-// use crate::{circular_buffer::CircularBuffer, simple_buffer::SimpleBuffer};
 
 static WRITE_BUFFER_SIZE: usize = 32;
 static mut USB_BUS: Option<UsbBusAllocator<UsbBus>> = None;
@@ -46,11 +44,16 @@ impl PicoUsbSerial {
         let bus_ref = unsafe { USB_BUS.as_ref().unwrap() };
 
         let serial = SerialPort::new(bus_ref);
-        let device = UsbDeviceBuilder::new(bus_ref, UsbVidPid(0x2E8A, 0x0005))
+
+        let descriptors = StringDescriptors::default()
             .manufacturer(manufacturer)
             .product(product)
-            .serial_number(serial_number)
+            .serial_number(serial_number);
+
+        let device = UsbDeviceBuilder::new(bus_ref, UsbVidPid(0x2E8A, 0x0005))
             .device_class(usbd_serial::USB_CLASS_CDC)
+            .strings(&[descriptors])
+            .map_err(|e| alloc::format!("Cannot build USB device: {e:?}"))?
             .build();
 
         unsafe {
@@ -121,7 +124,7 @@ unsafe fn USBCTRL_IRQ() {
             Ok(count) => {
                 // Convert to upper case
                 buf.iter_mut().take(count).for_each(|b| {
-                    buffer.write(b.clone());
+                    buffer.write(*b);
                 });
             }
         }
