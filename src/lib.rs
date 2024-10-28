@@ -7,10 +7,10 @@ use embedded_hal::delay::DelayNs;
 
 mod dht {
     #[cfg(feature = "rp2040")]
-    define_dht!(rp2040_hal, 133);
+    define_dht!(rp2040_hal);
 
     #[cfg(feature = "rp235x")]
-    define_dht!(rp235x_hal, 150);
+    define_dht!(rp235x_hal);
 }
 
 use dht::hal::{
@@ -42,7 +42,7 @@ type Dht22Result = DhtResult<f32, f32>;
 type Dht11Result = DhtResult<u16, u16>;
 
 pub struct Dht22<P: PIOExt, STI: StateMachineIndex> {
-    dht: DhtPio<0, P, STI>,
+    dht: DhtPio<1, P, STI>,
 }
 
 impl<P: PIOExt, STI: StateMachineIndex> Dht22<P, STI> {
@@ -50,9 +50,10 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht22<P, STI> {
         pio: hal::pio::PIO<P>,
         sm: UninitStateMachine<(P, STI)>,
         dht_pin: I,
+        clocks: &hal::clocks::ClocksManager,
     ) -> Self {
         Self {
-            dht: DhtPio::new(pio, sm, dht_pin),
+            dht: DhtPio::new(pio, sm, dht_pin, clocks),
         }
     }
 
@@ -73,7 +74,7 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht22<P, STI> {
 }
 
 pub struct Dht22Type2<P: PIOExt, STI: StateMachineIndex> {
-    dht: DhtPio<0, P, STI>,
+    dht: DhtPio<1, P, STI>,
 }
 
 impl<P: PIOExt, STI: StateMachineIndex> Dht22Type2<P, STI> {
@@ -81,9 +82,10 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht22Type2<P, STI> {
         pio: hal::pio::PIO<P>,
         sm: UninitStateMachine<(P, STI)>,
         dht_pin: I,
+        clocks: &hal::clocks::ClocksManager,
     ) -> Self {
         Self {
-            dht: DhtPio::new(pio, sm, dht_pin),
+            dht: DhtPio::new(pio, sm, dht_pin, clocks),
         }
     }
 
@@ -101,7 +103,7 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht22Type2<P, STI> {
 }
 
 pub struct Dht11<P: PIOExt, STI: StateMachineIndex> {
-    dht: DhtPio<17, P, STI>,
+    dht: DhtPio<18, P, STI>,
 }
 
 impl<P: PIOExt, STI: StateMachineIndex> Dht11<P, STI> {
@@ -109,9 +111,10 @@ impl<P: PIOExt, STI: StateMachineIndex> Dht11<P, STI> {
         pio: hal::pio::PIO<P>,
         sm: UninitStateMachine<(P, STI)>,
         dht_pin: I,
+        clocks: &hal::clocks::ClocksManager,
     ) -> Self {
         Self {
-            dht: DhtPio::new(pio, sm, dht_pin),
+            dht: DhtPio::new(pio, sm, dht_pin, clocks),
         }
     }
 

@@ -11,7 +11,7 @@ Numerous crates exist for using DHT via a digital pin, but after testing several
 ## The PIO ❤️
 The RP2040 chip (used for the Pico) has a rather atypical peripheral called PIO (Programmable Input/Output), [Chapter 3 of the DataSheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf). In simple terms, the idea is to be able to run a small program (max. 32 instructions), which executes independently. It can manipulate GPIOs and share information with the main program.
 
-The PIO is programmed using an assembler called `pioasm`, with just a few very basic instructions. What's interesting is that each instruction takes (usually) 1 cycle to execute. What's more, it's possible to divide the clock at which the program executes. In our case, we divide the main clock of 133 MHz by 133, giving us one instruction per microsecond.
+The PIO is programmed using an assembler called `pioasm`, with just a few very basic instructions. What's interesting is that each instruction takes (usually) 1 cycle to execute. What's more, it's possible to divide the clock at which the program executes. In our case the implementation obtains the system clock and set the PIO's clock to execute one instruction per microsecond.
 
 ## Usage
 Add this crate on your `cargo.toml`, use:
@@ -34,11 +34,11 @@ let (dht_pio, dht_sm, _, _, _) = pac.PIO0.split(&mut pac.RESETS);
 To create a new object:
 - DHT22  
   ````rust
-  let mut dht = Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function());
+  let mut dht = Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function(), &clocks);
   ```
 - DHT11
   ````rust
-  let mut dht = Dht11::new(dht_pio, dht_sm, pins.gpio0.into_function());
+  let mut dht = Dht11::new(dht_pio, dht_sm, pins.gpio0.into_function(), &clocks);
   ```
 
 Read data:

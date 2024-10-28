@@ -61,6 +61,9 @@ fn main() -> ! {
 
     let mut delay = hal::Timer::new(pac.TIMER, &mut pac.RESETS, &clocks);
 
+    let (dht_pio, dht_sm, _, _, _) = pac.PIO0.split(&mut pac.RESETS);
+    let mut dht = Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function(), &clocks);
+
     PicoUsbSerial::init(
         UsbBus::new(
             pac.USBCTRL_REGS,
@@ -77,9 +80,6 @@ fn main() -> ! {
     .expect("Failed to init Serial");
 
     let serial = PicoUsbSerial::get_serial().expect("Failed to get serial!");
-
-    let (dht_pio, dht_sm, _, _, _) = pac.PIO0.split(&mut pac.RESETS);
-    let mut dht = Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function());
 
     defmt::info!("DHT22 rp-pico");
 
