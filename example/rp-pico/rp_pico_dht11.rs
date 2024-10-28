@@ -42,7 +42,7 @@ fn main() -> ! {
     );
 
     let (dht_pio, dht_sm, ..) = pac.PIO0.split(&mut pac.RESETS);
-    let mut dht = dht_pio::Dht11::new(dht_pio, dht_sm, pins.gpio0.into_function());
+    let mut dht = dht_pio::Dht11::new(dht_pio, dht_sm, pins.gpio0.into_function(), &clocks);
 
     let mut led_pin = pins.gpio25.into_push_pull_output();
 

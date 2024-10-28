@@ -45,7 +45,7 @@ fn main() -> ! {
     );
 
     let (dht_pio, dht_sm, ..) = pac.PIO0.split(&mut pac.RESETS);
-    let mut dht = dht_pio::Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function());
+    let mut dht = dht_pio::Dht22::new(dht_pio, dht_sm, pins.gpio0.into_function(), &clocks);
 
     defmt::info!("DHT22 rp235x");
 

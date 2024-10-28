@@ -1,5 +1,5 @@
 macro_rules! define_dht {
-    ($hal:path, $clock_int:expr) => {
+    ($hal:path) => {
         use embedded_hal::delay::DelayNs;
 
         use pio_proc::pio_file;
@@ -9,20 +9,25 @@ macro_rules! define_dht {
         use hal::gpio::AnyPin;
         use hal::pio::{PIOExt, Running, StateMachine, StateMachineIndex, Tx};
         use hal::pio::{Rx, ShiftDirection, UninitStateMachine};
+        use hal::Clock;
 
         use crate::DhtError;
 
-        pub struct DhtPio<const ID: u32, P: PIOExt, STI: StateMachineIndex> {
+        pub(crate) struct DhtPio<const START_SIGNAL_LENGTH: u32, P: PIOExt, STI: StateMachineIndex> {
             sm: StateMachine<(P, STI), Running>,
             rx_fifo: Rx<(P, STI)>,
             tx_fifo: Tx<(P, STI)>,
         }
 
-        impl<const ID: u32, P: PIOExt, STI: StateMachineIndex> DhtPio<ID, P, STI> {
-            pub fn new<I: AnyPin<Function = P::PinFunction>>(
+        #[allow(clippy::cast_possible_truncation)]
+        impl<const START_SIGNAL_LENGTH: u32, P: PIOExt, STI: StateMachineIndex>
+            DhtPio<START_SIGNAL_LENGTH, P, STI>
+        {
+            pub(crate) fn new<I: AnyPin<Function = P::PinFunction>>(
                 mut pio: hal::pio::PIO<P>,
                 sm: UninitStateMachine<(P, STI)>,
                 dht_pin: I,
+                clocks: &hal::clocks::ClocksManager,
             ) -> Self {
                 let program = pio_file!("./src/dht.pio");
 
@@ -30,7 +35,9 @@ macro_rules! define_dht {
 
                 let installed = pio.install(&program.program).unwrap();
 
-                let (int, frac) = ($clock_int, 0);
+                let (int, frac) = (clocks.system_clock.freq().to_MHz() as u16, 0);
+                assert!(int > 0, "the system_clock must be >= 1MHz");
+                
                 let (mut sm, rx, tx) = hal::pio::PIOBuilder::from_installed_program(installed)
                     .out_pins(pin.id().num, 1)
                     .set_pins(pin.id().num, 1)
@@ -49,11 +56,11 @@ macro_rules! define_dht {
                 }
             }
 
-            pub fn read_data<D: DelayNs>(&mut self, delay: &mut D) -> Result<(u16, u16), DhtError> {
-                let mut timeout = 2000;
+            pub(crate) fn read_data<D: DelayNs>(&mut self, delay: &mut D) -> Result<(u16, u16), DhtError> {
+                let mut timeout = START_SIGNAL_LENGTH + 10;
                 let mut raw: [Option<u32>; 2] = [None; 2];
 
-                self.tx_fifo.write(ID);
+                self.tx_fifo.write(START_SIGNAL_LENGTH - 1);
 
                 while timeout > 0 && raw[1].is_none() {
                     match self.rx_fifo.read() {
